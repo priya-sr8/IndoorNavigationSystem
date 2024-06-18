@@ -1,0 +1,12 @@
+// Clear map
+.btn-clear-map {
+    text-transform: uppercase;
+    text-rendering: geometricPrecision;
+}
+
+// Used for directions
+.direction-btn-wrap {
+	.mat-raised-button:nth-child(2)[disabled]:not([class*='mat-elevation-z']) {
+		background-color: rgba(0, 0, 0, 0.12) !important;
+	}
+}

@@ -1,0 +1,56 @@
+
+
+.segment-headline-icon,
+.segment-destination-icon {
+    width: 24px;
+    height: 24px;
+    background-color: #fff;
+    border: 2px solid $discreet;
+    border-radius: 50px;
+    box-sizing: border-box;
+    .icon {
+        &-start {}
+        &-enter {
+            -webkit-mask: url(/assets/images/icons/entrance-variant.svg) no-repeat center center;
+            mask: url(/assets/images/icons/entrance-variant.svg) no-repeat center center;
+            mask-image: url(/assets/images/icons/entrance-variant.svg) no-repeat center center;
+        }
+        &-exit {
+            -webkit-mask: url(/assets/images/icons/exit-variant.svg) no-repeat center center;
+            mask: url(/assets/images/icons/exit-variant.svg) no-repeat center center;
+            mask-image: url(/assets/images/icons/exit-variant.svg) no-repeat center center;
+        }
+        &-elevator {
+            -webkit-mask: url(/assets/images/icons/elevator.svg) no-repeat center center;
+            mask: url(/assets/images/icons/elevator.svg) no-repeat center center;
+            mask-image: url(/assets/images/icons/elevator.svg) no-repeat center center;
+        }
+        &-stairs {
+            -webkit-mask: url(/assets/images/icons/stairs.svg) no-repeat center center;
+            mask: url(/assets/images/icons/stairs.svg) no-repeat center center;
+            mask-image: url(/assets/images/icons/stairs.svg) no-repeat center center;
+        }
+        &-escalator {
+            -webkit-mask: url(/assets/images/icons/escalator.svg) no-repeat center center;
+            mask: url(/assets/images/icons/escalator.svg) no-repeat center center;
+            mask-image: url(/assets/images/icons/escalator.svg) no-repeat center center;
+        }
+        &-destination {
+            -webkit-mask: url(/assets/images/icons/place.svg) no-repeat center center;
+            mask: url(/assets/images/icons/place.svg) no-repeat center center;
+            mask-image: url(/assets/images/icons/place.svg) no-repeat center center;
+        }
+        &-parking {
+            -webkit-mask: url(/assets/images/icons/parking.svg) no-repeat center center;
+            mask: url(/assets/images/icons/parking.svg) no-repeat center center;
+            mask-image: url(/assets/images/icons/parking.svg) no-repeat center center;
+        }
+    }
+    [class^="icon-"] {
+        width: 60%;
+        height: 60%;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        background-color: $discreet;
+    }
+}

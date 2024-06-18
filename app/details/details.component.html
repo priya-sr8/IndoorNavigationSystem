@@ -1,0 +1,166 @@
+<aside id="sidebar" *ngIf="location">
+
+    <!-- Hero -->
+    <section class="elevation-z2">
+        <header>
+            <div class="hero" [style.background-color]="colors.primary">
+                <nav class="hero-nav">
+                    <button class="venue-back-btn" mat-icon-button (click)="goBack()">
+                        <mat-icon [style.color]="colors.onPrimary" aria-label="Close dialog">arrow_back</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="openShareUrlDialog()">
+                        <mat-icon [style.color]="colors.onPrimary" aria-label="Close dialog">share</mat-icon>
+                    </button>
+                </nav>
+                <h1 class="truncate" [style.color]="colors.onPrimary">
+                    {{location.properties.name}}
+                </h1>
+                <div class="hero-img">
+                    <location-img
+                        [imageURL]="location.properties.imageURL"
+                        [apiKey]="'AIzaSyBOUv8R8xOta4bQ0nAEyb_jJdwI7sB7DHg'"
+                        [streetViewConfig]="location.properties.streetViewConfig ? location.properties.streetViewConfig : null">
+                    </location-img>
+                </div>
+            </div>
+        </header>
+    </section>
+
+    <!-- Content -->
+    <section class="content-container">
+        <section class="content">
+            <!-- Aliases  -->
+            <detail-field
+                *ngIf="displayAliases && location.properties.aliases?.length > 0"
+                [value]="location.properties.aliases.join(', ')"
+                iconName="stars">
+            </detail-field>
+
+            <!-- External Id -->
+            <detail-field
+                *ngIf="location.properties.externalId"
+                value="{{location.properties.externalId}}"
+                iconName="info">
+            </detail-field>
+
+            <!-- Categories -->
+            <detail-field
+                *ngIf="location.properties.categories?.length > 0"
+                value="{{location.properties.categories.join(', ')}}"
+                iconName="info">
+            </detail-field>
+
+            <!-- Audiovisual and VoiceChat -->
+            <detail-field
+                *ngIf="location.properties.fields?.vc"
+                heading="{{'Details.Audiovisual' | translate}}/{{'Details.VoiceChat' | translate}}"
+                [value]="location.properties.fields.vc.value"
+                iconName="mic">
+            </detail-field>
+
+            <!-- Restricted  -->
+            <detail-field
+                *ngIf="location.properties.fields?.restricted"
+                [heading]="'Details.Restricted' | translate"
+                value="{{location.properties.fields.restricted.value}}"
+                iconName="block">
+            </detail-field>
+
+            <!-- Capacity  -->
+            <detail-field
+                *ngIf="location.properties.capacity"
+                [heading]="'Details.Capacity' | translate"
+                value="{{location.properties.capacity}} {{ 'Details.People' | translate | lowercase}}"
+                iconName="groups">
+            </detail-field>
+
+            <!-- Bookable  -->
+            <detail-field
+                *ngIf="location.properties.fields?.bookable"
+                [heading]="'Details.Bookable' | translate"
+                value="{{location.properties.fields.bookable.value}}"
+                iconName="today">
+            </detail-field>
+
+            <!-- Peak time -->
+            <detail-field
+                *ngIf="locationPeakTime"
+                [heading]="'Details.PeakTime' | translate"
+                [value]="locationPeakTime.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }).toLowerCase() + ' - ' + locationPeakTime.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }).toLowerCase()"
+                iconName="access_time">
+            </detail-field>
+
+            <!-- Email -->
+            <detail-field
+                *ngIf="location.properties.fields?.email"
+                [value]="location.properties.fields.email.value"
+                iconName="email">
+            </detail-field>
+
+            <!-- Phone -->
+            <detail-field
+                *ngIf="location.properties.fields?.phone"
+                [value]="location.properties.fields.phone.value"
+                iconName="phone">
+            </detail-field>
+
+            <!-- Website -->
+            <detail-field
+                *ngIf="location.properties.fields?.website"
+                [value]="location.properties.fields.website.value"
+                isUrl="true"
+                iconName="open_in_new">
+            </detail-field>
+
+            <!-- Opening hours -->
+            <detail-field
+                *ngIf="location.properties.fields?.openinghours"
+                [value]="location.properties.fields.openinghours.value"
+                iconName="access_time">
+            </detail-field>
+
+            <!-- Description -->
+            <detail-field
+                *ngIf="location.properties.description"
+                [value]="location.properties.description"
+                iconName="description">
+            </detail-field>
+
+            <!-- Building and floor -->
+            <div class="text">
+                <mat-icon class="text-icon">location_city</mat-icon>
+                <p class="line-break">
+                    <span *ngIf="location.properties.floorName">{{ 'Details.Level' | translate }} {{ location.properties.floorName }}</span>
+                    <span *ngIf="location.properties.building">{{ location.properties.building }}</span>
+                    <!-- Hiding venue name if it's the same as building name -->
+                    <span *ngIf="location.properties.venue && location.properties.building != location.properties.venue">{{ location.properties.venue }}</span>
+                </p>
+            </div>
+
+            <app-timestamp
+                *ngIf="timestamp"
+                [time]="timestamp">
+            </app-timestamp>
+
+            <!-- Footer -->
+            <footer class="footer-content">
+                <nav class="content-text">
+                    <span>
+                        <button mat-raised-button *ngIf="isHandset" (click)="showOnMap()">
+                            {{ 'Buttons.ShowOnMap' | translate }}
+                        </button>
+                    </span>
+                    <span>
+                        <button [style.background-color]="colors.accent" mat-raised-button (click)="getDirections(location)">
+                            <mat-icon [style.color]="colors.onAccent" aria-label="Get directions">directions</mat-icon>
+                            <span [style.color]="colors.onAccent">
+                                {{ 'Buttons.Directions' | translate }}
+                            </span>
+                        </button>
+                    </span>
+                </nav>
+            </footer>
+
+        </section>
+    </section>
+</aside>
