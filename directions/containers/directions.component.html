@@ -1,0 +1,184 @@
+<aside id="sidebar" *ngIf="venue">
+    <section class="elevation-z2">
+        <mat-toolbar [style.background-color]="colors.primary">
+            <nav class="nav-travel-mode">
+                <button mat-icon-button (click)="goBack()">
+                    <mat-icon [style.color]="colors.onPrimary" aria-label="Close dialog">arrow_back</mat-icon>
+                </button>
+                <div class="travel-mode">
+                    <button mat-icon-button [class.active]="travelMode === 'WALKING'" (click)="setNewTravelMode('WALKING')">
+                        <mat-icon [style.color]="colors.onPrimary">directions_walk</mat-icon>
+                    </button>
+                    <button mat-icon-button [class.active]="travelMode === 'BICYCLING'" (click)="setNewTravelMode('BICYCLING')">
+                        <mat-icon [style.color]="colors.onPrimary">directions_bike</mat-icon>
+                    </button>
+                    <button mat-icon-button [class.active]="travelMode === 'TRANSIT'" (click)="setNewTravelMode('TRANSIT')">
+                        <mat-icon [style.color]="colors.onPrimary">directions_transit</mat-icon>
+                    </button>
+                    <button mat-icon-button [class.active]="travelMode === 'DRIVING'" (click)="setNewTravelMode('DRIVING')">
+                        <mat-icon [style.color]="colors.onPrimary">drive_eta</mat-icon>
+                    </button>
+                </div>
+            </nav>
+        </mat-toolbar>
+
+        <div class="searchbox-container" [style.background-color]="colors.primary">
+            <!-- Dots -->
+            <div class="dots-wrap">
+                <div>
+                    <span class="circle" [style.border-color]="colors.onPrimary"></span>
+                </div>
+                <div>
+                    <span class="dots" [style.border-color]="colors.onPrimary"></span>
+                </div>
+                <div>
+                    <span class="pin">
+                        <mat-icon [style.color]="colors.onPrimary">location_on</mat-icon>
+                    </span>
+                </div>
+            </div>
+            <!-- Search -->
+            <div [ngClass]="'search-wrap'">
+                <!-- Origin search -->
+                <search-input #originSearchComponent *ngIf="searchParameters" (currentInputField)="setCurrentInputField('start')" (blurred)="blurInputField()" [query]="originInputValue" [parameters]="searchParameters" [includeGooglePlaces]="true" [countryCodeRestrictions]="searchCountryCodeRestrictions" [placeHolder]="'Direction.From'" (loading)="loadingHandler()" (update)="searchResultsChange($event)">
+                </search-input>
+
+                <!-- Destination search -->
+                <search-input #destinationSearchComponent *ngIf="searchParameters" (currentInputField)="setCurrentInputField('dest')" (blurred)="blurInputField()" [query]="destinationInputValue" [parameters]="searchParameters" [includeGooglePlaces]="true" [countryCodeRestrictions]="searchCountryCodeRestrictions" [placeHolder]="'Direction.To'" (loading)="loading = true" (update)="searchResultsChange($event)">
+                </search-input>
+
+                <!-- Stairs checkbox -->
+                <div class="checkbox">
+                    <mat-checkbox [style.color]="colors.onPrimary" (change)="changeAvoidStairs()">
+                        {{'Direction.AvoidStairs' | translate }}
+                    </mat-checkbox>
+                </div>
+            </div>
+            <!-- Switch direction -->
+            <div class="switch-direction">
+                <button mat-icon-button (click)="switchOriginAndDest()">
+                    <mat-icon [style.color]="colors.onPrimary" aria-label="Switch values">&#xE8D5;</mat-icon>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Content -->
+    <section class="content-container">
+        <section class="content">
+            <!-- Loading -->
+            <div class="content-text" *ngIf="loading">
+                <mat-spinner></mat-spinner>
+            </div>
+            <!-- Error message -->
+            <div *ngIf="error && !loading && !searchInputFieldHasFocus" class="content-text">
+                <p class="text-discreet">{{error}}</p>
+            </div>
+            <!-- List -->
+            <user-position *ngIf="useBrowserPositioning && currentPositionVisible && currentInputField === 'start'" (eventTriggered)="handleMyPositionClick($event)" (error)="handleMyPositionError()"></user-position>
+            <div class="content-text" *ngIf="!loading && searchResults.length === 0 && searchInputFieldHasFocus">
+                <p class="hint">{{ 'DirectionHint.SearchHint' | translate }}</p>
+            </div>
+
+            <mat-nav-list *ngIf="searchResults && !loading">
+                <!-- List of queries -->
+                <a mat-list-item *ngFor="let location of searchResults" (click)="selectLocation(location)">
+                    <span class="list-icon">
+                        <img class="material-icons" [src]="getIconUrl(location)">
+                    </span>
+                    <span class="list-text">
+                        <span class="list-title">{{location.properties.name}}</span>
+                        <!-- MapsIndoors locations -->
+                        <span class="list-title-sub" *ngIf="!location.properties.subtitle">
+                            <span *ngIf="location.properties.externalId">{{location.properties.externalId}}</span>
+                            <span *ngIf="location.properties.floorName">Level {{location.properties.floorName}}</span>
+                            <span *ngIf="location.properties.building && venuesLength > 1">{{location.properties.building}}</span>
+                            <span *ngIf="location.properties.building != location.properties.venue && venuesLength > 1">{{location.properties.venue}}</span>
+                        </span>
+                        <!-- Google locations -->
+                        <span class="list-title-sub" *ngIf="location.properties.subtitle">
+                            <span>{{location.properties.subtitle}}</span>
+                        </span>
+                    </span>
+                </a>
+            </mat-nav-list>
+
+            <!-- Route instructions-->
+            <div *ngIf="directionsResponse">
+                <p class="route-total text-discreet">
+                    <mi-time
+                        [seconds]="totalTravelDuration"
+                        translations='{"days":"{{instructionsTranslations.days}}","hours":"{{instructionsTranslations.hours}}","minutes":"{{instructionsTranslations.minutes}}"}'>
+                    </mi-time>
+                    {{ 'DirectionRoute.ToDestination' | translate }}
+                    (<mi-distance [meters]="totalTravelDistance" [unit]="unit"></mi-distance>)
+                </p>
+                <mi-route-instructions
+                    #routeInstructions
+                    [translations]="instructionsTranslations"
+                    [route]="directionsResponse"
+                    [originLocation]="originLocation"
+                    [destinationLocation]="destinationLocation"
+                    [unit]="unit">
+                </mi-route-instructions>
+            </div>
+
+            <!-- #region Agency information -->
+            <section class="agency-container" *ngIf="transitAgencies.length > 0">
+                <div class="agency-toggle-wrap flex-v-center" (click)="toggleAgencyInfo()">
+                    <p class="toggle-agency">{{ 'DirectionRoute.AgencyInfo' | translate }} ({{ transitAgencies.length }})</p>
+                    <mat-icon class="text-discreet" *ngIf="!showAgencyInfo">keyboard_arrow_right</mat-icon>
+                    <mat-icon class="text-discreet" *ngIf="showAgencyInfo">keyboard_arrow_down</mat-icon>
+                </div>
+                <div *ngIf="showAgencyInfo">
+                    <section class="agency" *ngFor="let agency of transitAgencies">
+                        <!-- Name -->
+                        <p class="agency-header">{{agency.name}}</p>
+                        <div class="agency-content" *ngIf="agency.phone || agency.url">
+                            <!-- Phone -->
+                            <p *ngIf="agency.phone">
+                                <span>{{ 'DirectionRoute.Phone' | translate }}: </span>
+                                <span>{{agency.phone}}</span>
+                            </p>
+                            <!-- Url -->
+                            <p *ngIf="agency.url">
+                                <span>{{ 'DirectionRoute.Website' | translate }}: </span>
+                                <span>
+                                    <a class="text-link" href="{{agency.url}}" target="_blank" rel="noopener">
+                                        {{agency.website.protocol}}//{{agency.website.hostname}}
+                                    </a>
+                                </span>
+                            </p>
+                        </div>
+                        <hr class="ruler-discreet" *ngIf="transitAgencies.length > 1">
+                    </section>
+                </div>
+            </section>
+            <!-- #endregion -->
+
+            <!-- #region Footer -->
+            <footer class="footer-content">
+                <span *ngIf="isPoweredByGoogle" class="content-text center">
+                    <img class="powered-by-google" src="/assets/images/powered_by_google_on_white_hdpi.png" />
+                </span>
+
+                <!-- Show on map, Previous and next button -->
+                <div class="flex-h-center direction-btn-wrap">
+                    <button mat-raised-button *ngIf="isHandset && flattenedStepsArray?.length > 0" (click)="showOnMap()">
+                        {{ 'Buttons.ShowOnMap' | translate }}
+                    </button>
+
+                    <ng-container *ngIf="!isHandset && flattenedStepsArray?.length > 1">
+                        <button mat-raised-button [disabled]="flattenedStepsArrayIndex <= 0" (click)="showPreviousStep()">
+                            {{'DirectionRoute.Previous' | translate }}
+                        </button>
+                        <button mat-raised-button [disabled]="flattenedStepsArrayIndex === (flattenedStepsArray.length -1)" (click)="showNextStep()" [style.background-color]="colors.accent" [style.color]="colors.onAccent">
+                            {{ 'DirectionRoute.Next' | translate }}
+                        </button>
+                    </ng-container>
+                </div>
+            </footer>
+            <!-- #endregion -->
+        </section>
+    </section>
+</aside>

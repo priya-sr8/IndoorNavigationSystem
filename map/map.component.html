@@ -1,0 +1,22 @@
+<mat-sidenav-container class="sidenav-container">
+    <mat-sidenav #drawer class="sidenav" fixedInViewport="true" [attr.role]="isHandset ? 'dialog' : 'navigation'" [mode]="isHandset ? 'over' : 'side'" [disableClose]="!isHandset" [opened]="!isHandset" [autoFocus]="false">
+        <router-outlet></router-outlet>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <!-- Top bar  -->
+        <mat-toolbar *ngIf="statusOk" [style.background-color]="colors.primary">
+            <button type="button" aria-label="Toggle sidenav" [style.color]="colors.onPrimary" mat-icon-button (click)="drawer.toggle()" *ngIf="isHandset">
+                <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+            </button>
+            <div class="map-header-container flex-space-between flex-v-center">
+                <h1 class="truncate" [style.color]="colors.onPrimary">{{ pageTitle }}</h1>
+                <button mat-icon-button [style.color]="colors.onPrimary" class="btn-clear-map" *ngIf="mapsIndoorsService.isMapDirty" (click)="clearMap()">
+                    <mat-icon aria-label="Clear">close</mat-icon>
+                </button>
+            </div>
+        </mat-toolbar>
+
+        <!-- Google map -->
+        <div id="gmap" [ngClass]="{ 'small-map': isHandset }"></div>
+    </mat-sidenav-content>
+</mat-sidenav-container>
