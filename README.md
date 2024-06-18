@@ -1,14 +1,3 @@
-# MapsIndoors Showcase Web App
-A [MapsIndoors](https://www.mapspeople.com/mapsindoors/) powered showcase app free to use and adapt to your needs.
+The existing Navigation System solely uses static sign boards, which is not user-friendly and is unable to display the quickest path between the two sites. Those who are unfamiliar with it or are using it for the first time often have trouble getting around. The campus will be home to a wide variety of multi- story buildings. The majority of the structures are interconnected. Users do not always have assistance getting to their destination, even though there are maps at various location on the campus. Using these static maps, they can try to figure out how to get to their destination, but once they start moving in the desired direction, they are on their own. To solve this problem, we plan to create an application that gives users ongoing help while they travel to their destinations. The Web-app's major goal is to cut down on the time needed to find the destination. 
 
-## Getting Started
-Before you begin, make sure your development environment includes Node.js version 16 with the NPM package manager.
-
-Using a terminal/shell in the project folder, run the following commands:
-
-* Run `npm install` to install all dependencies.
-
-* Run `npm start` for a dev server and then enter a Solution ID in the URL, e.g. http://localhost:4200/demo. The app will automatically reload if you change any of the source files.
-
-## Live Demo
-Check out a running version [here](https://clients.mapsindoors.com/demo).
+To get over the difficulties with the existing model, we introduced an indoor campus navigation system that enables users to enter the source location via our web application and go quickly to their destination. The major modules of the proposed System are Route and Directions, Route Step Model, Wayfinding Instructions, and Network / Route Graph. In the sidebar, various guides concerning the display and customization of the map itself are available. 
